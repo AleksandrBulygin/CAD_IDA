@@ -4,7 +4,6 @@
 #define N 12
 #define M 24
 #define num_train 100
-#define num_test 50
 
 typedef struct FP_struct{
     int P;
@@ -112,16 +111,19 @@ int main() {
                bout_r,  tabl_sigma);
     }
 // check
+    long long check = 0;
     for (i = 0; i < M; i++) {
         for (j = 0; j < 2; j++) {
             if (j == 0)
-                printf("P_out_opt = %.2f, P_true = %.2f\n",
-                       (float) y_out[i].P / 32768, y_true[j][i]);
+                check += (long long)((((float) y_out[i].P / 32768) - y_true[j][i]) < 0.01) << i;
             else
-                printf("I_out_opt = %.2f, I_true = %.2f\n",
-                       (float) y_out[i].I / 32768, y_true[j][i]);
+                check += (long long)((((float) y_out[i].I / 32768) - y_true[j][i]) < 0.01) << (i + M);
 
         }
     }
+    if (check == 0xFFFFFFFFFFFF)
+        printf("test passed\n");
+    else
+        printf("test failed\n");
     return 0;
 }
